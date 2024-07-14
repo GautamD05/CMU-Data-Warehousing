@@ -1,16 +1,23 @@
 with source as (
+
     select * from {{ source('main', 'fhv_tripdata') }}
+
 ),
- -- Keep all the columns datatype as is and drop SR_Flag since it has null for all records
+
 renamed as (
+
     select
-        dispatching_base_num,
+        trim(upper(dispatching_base_num)) as  dispatching_base_num, --some ids are lowercase
         pickup_datetime,
-        dropOff_datetime,
-        PUlocationID,
-        DOlocationID,
-        Affiliated_base_number,
+        dropoff_datetime,
+        pulocationid,
+        dolocationid,
+        --sr_flag, always null so chuck it
+        trim(upper(affiliated_base_number)) as affiliated_base_number,
         filename
+
     from source
+
 )
+
 select * from renamed
