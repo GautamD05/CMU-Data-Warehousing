@@ -7,22 +7,24 @@ with source as (
 renamed as (
 
     select
-        station,
-        name,
-        date::date as date,
-        awnd::double as awnd,
-        prcp::double as prcp,
-        snow::double as snow,
-        snwd::double as snwd,
-        tmax::int as tmax,
-        tmin::int as tmin,
-        filename
+        station,  -- Weather station ID
+        name,  -- Weather station name
+        date::date as date,  -- Observation date
+        awnd::double as awnd,  -- Average wind speed
+        prcp::double as prcp,  -- Precipitation
+        snow::double as snow,  -- Snowfall
+        snwd::double as snwd,  -- Snow depth
+        tmax::int as tmax,  -- Maximum temperature
+        tmin::int as tmin,  -- Minimum temperature
+        filename  -- Source file name
 
     from source
 
 )
 
-select 
+select
+    station,
+    name, 
     date,
     awnd,
     prcp,
