@@ -1,0 +1,78 @@
+select 
+-- Extract the day of the week from the trip start timestamp
+    weekday(started_at_ts) as weekday, 
+-- Count the total number of trips for each day of the week
+    count(*) as total_trips, 
+-- Sum the total trip duration in seconds for each day of the week
+    sum(duration_sec) as total_trip_duration_secs 
+from "nyc_transit"."main"."mart__fact_all_bike_trips"
+group by all
+┌─────────┬─────────────┬──────────────────────────┐
+│ weekday │ total_trips │ total_trip_duration_secs │
+│  int64  │    int64    │          int128          │
+├─────────┼─────────────┼──────────────────────────┤
+│       0 │      644442 │                910645349 │
+│       1 │      670119 │                770404685 │
+│       2 │      706091 │                810015883 │
+│       3 │      681487 │                746876172 │
+│       4 │      679193 │                787743492 │
+│       5 │      672774 │                786374374 │
+│       6 │      726257 │                998950748 │
+└─────────┴─────────────┴──────────────────────────┘
+select 
+    count(*) as total_trips -- Calculate the total number of trips
+from "nyc_transit"."main"."mart__fact_all_taxi_trips" taxi
+join "nyc_transit"."main"."mart__dim_locations" loc
+on taxi.DOlocationID = loc.LocationID
+where loc.service_zone in ('Airports', 'EWR') -- Filter the results to include only trips ending in 'Airports' or 'EWR' service zones
+group by all
+┌─────────────┐
+│ total_trips │
+│    int64    │
+├─────────────┤
+│     1062928 │
+└─────────────┘
+with all_taxi_trips as (
+-- Calculate total trips by weekday, excluding trips with null pickup or dropoff locations
+    select 
+        weekday(pickup_datetime) as weekday, 
+        count(*) as total_trips
+    from "nyc_transit"."main"."mart__fact_all_taxi_trips" taxi
+    where PUlocationID is not null and DOlocationID is not null
+    group by weekday
+),
+diff_borough as (
+-- Calculate different borough trips by weekday 
+    select 
+        weekday(pickup_datetime) as weekday, 
+        count(*) as diff_borough_trips
+    from "nyc_transit"."main"."mart__fact_all_taxi_trips" taxi
+    join "nyc_transit"."main"."mart__dim_locations" ploc on taxi.PUlocationID = ploc.LocationID
+    join "nyc_transit"."main"."mart__dim_locations" dloc on taxi.DOlocationID = dloc.LocationID
+    where ploc.borough != dloc.borough
+    group by weekday
+)
+-- Select trips by weekday and calculate percentage
+select 
+    all_taxi_trips.weekday,
+    all_taxi_trips.total_trips,
+-- Calculate number of  trips starting and ending in a different borough and percentage of trips with different start/end
+-- coalesce to handle cases where there might be no inter-borough trips for a given weekday
+    coalesce(diff_borough.diff_borough_trips, 0) as different_borough_trips,
+    (coalesce(diff_borough.diff_borough_trips, 0) / all_taxi_trips.total_trips::float) * 100 || '%' as percent_different_borough
+from all_taxi_trips
+-- Left join to ensure that all weekdays from all_taxi_trips are included even if there are no corresponding  different borough trips for that weekday
+left join diff_borough on all_taxi_trips.weekday = diff_borough.weekday
+order by all_taxi_trips.weekday;
+┌─────────┬─────────────┬─────────────────────────┬───────────────────────────┐
+│ weekday │ total_trips │ different_borough_trips │ percent_different_borough │
+│  int64  │    int64    │          int64          │          varchar          │
+├─────────┼─────────────┼─────────────────────────┼───────────────────────────┤
+│       0 │     5332343 │                 1525015 │ 28.599342%                │
+│       1 │     4926865 │                 1284125 │ 26.063734%                │
+│       2 │     5116466 │                 1272624 │ 24.873106%                │
+│       3 │     5541520 │                 1374675 │ 24.806822%                │
+│       4 │     5697479 │                 1459914 │ 25.623857%                │
+│       5 │     6181593 │                 1582690 │ 25.603271%                │
+│       6 │     6481991 │                 1696077 │ 26.165989%                │
+└─────────┴─────────────┴─────────────────────────┴───────────────────────────┘
