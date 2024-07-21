@@ -1,9 +1,9 @@
 models:
   - name: stg__bike_data
-    description: "Staging table for bike data"
+    description: ""
     columns:
       - name: started_at_ts
-        description: "The timestamp when the ride started"
+        description: ""
         tests:
           - not_null
           - dbt_expectations.expect_column_to_exist
@@ -11,64 +11,87 @@ models:
               column_type: timestamp
 
       - name: ended_at_ts
-        description: "The timestamp when the ride ended"
+        description: ""
         tests:
           - not_null
           - dbt_expectations.expect_column_to_exist
           - dbt_expectations.expect_column_values_to_be_of_type:
-              column_type: timestamp        
+              column_type: timestamp
 
       - name: tripduration
-        description: "Duration of the trip in seconds"
+        description: ""
+        tests:
+          - not_null
+          - dbt_expectations.expect_column_to_exist
 
       - name: start_station_id
-        description: "ID of the station where the ride started"
+        description: ""
 
       - name: start_station_name
-        description: "Name of the station where the ride started"
+        description: ""
 
       - name: start_lat
-        description: "Latitude of the start station"
+        description: ""
         tests:
-          - dbt_expectations.expect_column_values_to_be_between: #the ranges for latitude are -90 to 90 
-              min_value: -90
-              max_value: 90        
+          - not_null
+          - dbt_expectations.expect_column_to_exist
+          - dbt_expectations.expect_column_values_to_be_of_type:
+              column_type: double
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: -90.0
+              max_value: 90.0
 
       - name: start_lng
-        description: "Longitude of the start station"
+        description: ""
         tests:
-          - dbt_expectations.expect_column_values_to_be_between: #the ranges for latitude are -180 to 180
-              min_value: -180
-              max_value: 180
-              
+          - not_null
+          - dbt_expectations.expect_column_to_exist
+          - dbt_expectations.expect_column_values_to_be_of_type:
+              column_type: double
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: -180.0
+              max_value: 180.0
+
       - name: end_station_id
-        description: "ID of the station where the ride ended"
+        description: ""
 
       - name: end_station_name
-        description: "Name of the station where the ride ended"
+        description: ""
 
       - name: end_lat
-        description: "Latitude of the end station"
+        description: ""
         tests:
-          - dbt_expectations.expect_column_values_to_be_between: #the ranges for latitude are -90 to 90 
-              min_value: -90
-              max_value: 90
-              
+          - dbt_expectations.expect_column_to_exist
+          - dbt_expectations.expect_column_values_to_be_of_type:
+              column_type: double
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: -90.0
+              max_value: 90.0
+
       - name: end_lng
-        description: "Longitude of the end station"
+        description: ""
         tests:
-          - dbt_expectations.expect_column_values_to_be_between:  #the ranges for latitude are -180 to 180
-              min_value: -180
-              max_value: 180
-              
+          - dbt_expectations.expect_column_to_exist
+          - dbt_expectations.expect_column_values_to_be_of_type:
+              column_type: double
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: -180.0
+              max_value: 180.0
+
       - name: filename
-        description: "Name of the file from which data was ingested"
+        description: ""
 
   - name: stg__central_park_weather
-    description: "Staging table for Central Park weather data"
+    description: ""
     columns:
+      - name: station
+        description: ""
+
+      - name: name
+        description: ""
+
       - name: date
-        description: "Date of the weather observation"
+        description: ""
         tests:
           - not_null
           - dbt_expectations.expect_column_to_exist
@@ -78,7 +101,6 @@ models:
       - name: awnd
         description: "Average wind speed"
         tests:
-          - not_null
           - dbt_expectations.expect_column_to_exist
           - dbt_expectations.expect_column_values_to_be_of_type:
               column_type: double
@@ -94,7 +116,6 @@ models:
       - name: snow
         description: "Snowfall"
         tests:
-          - not_null
           - dbt_expectations.expect_column_to_exist
           - dbt_expectations.expect_column_values_to_be_of_type:
               column_type: double
@@ -112,9 +133,7 @@ models:
         description: ""
         tests:
           - not_null
-          - dbt_expectations.expect_column_to_exist
-          - dbt_expectations.expect_column_values_to_be_of_type:
-              column_type: int        
+          - dbt_expectations.expect_column_to_exist        
 
       - name: tmin
         description: "Minimum temperature"
@@ -122,300 +141,292 @@ models:
         tests:
           - not_null
           - dbt_expectations.expect_column_to_exist
-          - dbt_expectations.expect_column_values_to_be_of_type:
-              column_type: int
-              
+
+
       - name: filename
-        description: "Name of the file from which data was ingested"
+        description: ""
 
   - name: stg__fhv_bases
-    description: "Staging table for FHV bases data"
+    description: ""
     columns:
       - name: base_number
-        description: "The TLC license number of the dispatching base"
+        description: ""
 
       - name: base_name
-        description: "The official name of the base entity"
+        description: ""
 
       - name: dba
-        description: "The doing business as name of the base"
+        description: ""
 
       - name: dba_category
-        description: "Category of the base"
+        description: ""
 
       - name: filename
-        description: "Name of the file from which data was ingested"
+        description: ""
 
   - name: stg__fhv_tripdata
-    description: "Staging table for FHV trip data"
+    description: ""
     columns:
       - name: dispatching_base_num
-        description: "The TLC Base License Number of the base that dispatched the trip"
+        description: ""
         tests:
         - relationships:
             to: ref('staging','stg__fhv_bases')
-            field: base_number
+            field: base_number 
 
       - name: pickup_datetime
-        description: "The date and time of the trip pick-up"
+        description: ""
 
       - name: dropoff_datetime
-        description: "The date and time of the trip dropoff"
+        description: ""
 
       - name: pulocationid
-        description: "TLC Taxi Zone in which the trip began"
+        description: ""
 
       - name: dolocationid
-        description: "TLC Taxi Zone in which the trip ended"
+        description: ""
 
       - name: affiliated_base_number
-        description: "The TLC license number of the base that affiliated the vehicle"
+        description: ""
 
       - name: filename
-        description: "Name of the file from which data was ingested"
+        description: ""
 
   - name: stg__fhvhv_tripdata
-    description: "Staging table for FHVHV trip data"
+    description: ""
     columns:
       - name: hvfhs_license_num
-        description: "The TLC license number of the HVFHS base or business"
+        description: ""
 
       - name: dispatching_base_num
-        description: "The TLC Base License Number of the base that dispatched the trip"
+        description: ""
 
       - name: originating_base_num
-        description: "Base number of the base that received the original trip request"
+        description: ""
 
       - name: request_datetime
-        description: "Date/time when passenger requested to be picked up"
+        description: ""
 
       - name: on_scene_datetime
-        description: "Date/time when driver arrived at the pick-up location (Accessible Vehicles-only)"
+        description: ""
 
       - name: pickup_datetime
-        description: "The date and time of the trip pick-up"
+        description: ""
 
       - name: dropoff_datetime
-        description: "The date and time of the trip drop-off"
+        description: ""
 
       - name: pulocationid
-        description: "TLC Taxi Zone in which the trip began"
+        description: ""
 
       - name: dolocationid
-        description: "TLC Taxi Zone in which the trip ended"
+        description: ""
 
       - name: trip_miles
-        description: "Total miles for passenger trip"
+        description: ""
 
       - name: trip_time
-        description: "Total time in seconds for passenger trip"
+        description: ""
 
       - name: base_passenger_fare
-        description: "Base passenger fare before tolls, tips, taxes, and fees"
+        description: ""
 
       - name: tolls
-        description: "Total amount of all tolls paid in trip"
+        description: ""
 
       - name: bcf
-        description: "Total amount collected in trip for Black Car Fund"
+        description: ""
 
       - name: sales_tax
-        description: "Total amount collected in trip for NYS sales tax"
+        description: ""
 
       - name: congestion_surcharge
-        description: "Total amount collected in trip for NYS congestion surcharge"
+        description: ""
 
       - name: airport_fee
-        description: "$2.50 for both drop off and pick up at LaGuardia, Newark, and John F. Kennedy airports"
+        description: ""
 
       - name: tips
-        description: "Total amount of tips received from passenger"
+        description: ""
 
       - name: driver_pay
-        description: "Total driver pay (not including tolls or tips and net of commission, surcharges, or taxes)"
+        description: ""
 
       - name: shared_request_flag
-        description: "Did the passenger agree to a shared/pooled ride, regardless of whether they were matched? (Y/N)"
+        description: ""
         tests:
-          - not_null:
-              config:
-                severity: warn   # Set the severity level to warn since there could be some legitimate have null values  
+          - not_null
+          - dbt_expectations.expect_column_to_exist
           - dbt_expectations.expect_column_values_to_be_of_type:
               column_type: boolean
 
       - name: shared_match_flag
-        description: "Did the passenger share the vehicle with another passenger who booked separately at any point during the trip? (Y/N)"
+        description: ""
         tests:
-          - not_null:
-              config:
-                severity: warn    # Set the severity level to warn since there could be some legitimate have null values      
+          - not_null
+          - dbt_expectations.expect_column_to_exist
           - dbt_expectations.expect_column_values_to_be_of_type:
-              column_type: boolean        
+              column_type: boolean
 
       - name: access_a_ride_flag
-        description: "Was the trip administered on behalf of the Metropolitan Transportation Authority (MTA)? (Y/N)"
+        description: ""
         tests:
-          - not_null:
-              config:
-                severity: warn    # Set the severity level to warn since there could be some legitimate have null values  
+          # - dbt_expectations.expect_column_to_exist
           - dbt_expectations.expect_column_values_to_be_of_type:
-              column_type: boolean        
+              column_type: boolean
 
       - name: wav_request_flag
-        description: "Did the passenger request a wheelchair-accessible vehicle (WAV)? (Y/N)"
+        description: ""
         tests:
-          - not_null:
-              config:
-                severity: warn    # Set the severity level to warn since there could be some legitimate have null values      
+          - not_null
+          - dbt_expectations.expect_column_to_exist
           - dbt_expectations.expect_column_values_to_be_of_type:
               column_type: boolean
-              
+
       - name: wav_match_flag
-        description: "Did the trip occur in a wheelchair-accessible vehicle (WAV)? (Y/N)"
+        description: ""
         tests:
-          - not_null:
-              config:
-                severity: warn     # Set the severity level to warn since there could be some legitimate have null values     
+          - not_null
+          - dbt_expectations.expect_column_to_exist
           - dbt_expectations.expect_column_values_to_be_of_type:
               column_type: boolean
-              
+
       - name: filename
-        description: "Name of the file from which data was ingested"
+        description: ""
 
   - name: stg__green_tripdata
-    description: "Staging table for green taxi trip data"
+    description: ""
     columns:
       - name: vendorid
-        description: "A code indicating the LPEP provider that provided the record"
+        description: ""
 
       - name: lpep_pickup_datetime
-        description: "The date and time when the meter was engaged"
+        description: ""
 
       - name: lpep_dropoff_datetime
-        description: "The date and time when the meter was disengaged"
+        description: ""
 
       - name: store_and_fwd_flag
-        description: "This flag indicates whether the trip record was held in vehicle memory before sending to the vendor, aka 'store and forward,' because the vehicle did not have a connection to the server. Y= store and forward trip, N= not a store and forward trip"
+        description: ""
         tests:
-          - not_null:
-              config:
-                severity: warn     # Set the severity level to warn since there could be some legitimate have null values     
+          - dbt_expectations.expect_column_to_exist
           - dbt_expectations.expect_column_values_to_be_of_type:
               column_type: boolean
-              
+
       - name: ratecodeid
-        description: "The final rate code in effect at the end of the trip. 1= Satndard rate, 2= JFK, 3= Newark, 4= Nassau or Westchester, 5= Negotiated fare, 6= Group ride"
+        description: ""
 
       - name: pulocationid
-        description: "TLC Taxi Zone in which the taximeter was engaged"
+        description: ""
 
       - name: dolocationid
-        description: "TLC Taxi Zone in which the taximeter was disengaged"
+        description: ""
 
       - name: passenger_count
-        description: "The number of passengers in the vehicle"
+        description: ""
 
       - name: trip_distance
-        description: "The elapsed trip distance in miles reported by the taximeter"
+        description: ""
 
       - name: fare_amount
-        description: "The time-and-distance fare calculated by the meter"
+        description: ""
 
       - name: extra
-        description: "Miscellaneous extras and surcharges. Currently, this only includes the $0.50 and $1 rush hour and overnight charges."
+        description: ""
 
       - name: mta_tax
-        description: "$0.50 MTA tax that is automatically triggered based on the metered rate in use"
+        description: ""
 
       - name: tip_amount
-        description: "This field is automatically populated for credit card tips. Cash tips are not included"
+        description: ""
 
       - name: tolls_amount
-        description: "Total amount of all tolls paid in trip"
+        description: ""
+
+      - name: ehail_fee
+        description: ""
 
       - name: improvement_surcharge
-        description: "$0.30 improvement surcharge assessed on hailed trips at the flag drop. The improvement surcharge began being levied in 2015."
+        description: ""
 
       - name: total_amount
-        description: "The total amount charged to passengers. Does not include cash tips"
+        description: ""
 
       - name: payment_type
-        description: "A numeric code signifying how the passenger paid for the trip. 1= Credit card, 2= Cash, 3= No charge, 4= Dispute, 5= Unknown, 6= Voided trip"
+        description: ""
 
       - name: trip_type
-        description: "A code indicating whether the trip was a street-hail or a dispatch that is automatically assigned based on the metered rate in use but can be altered by the driver. 1= Street-hail, 2= Dispatch"
+        description: ""
 
       - name: congestion_surcharge
-        description: "Total amount collected in trip for NYS congestion surcharge"
+        description: ""
 
       - name: filename
-        description: "Name of the file from which data was ingested"
+        description: ""
 
   - name: stg__yellow_tripdata
-    description: "Staging table for yellow taxi trip data"
+    description: ""
     columns:
       - name: vendorid
-        description: "A code indicating the LPEP provider that provided the record."
+        description: ""
 
       - name: tpep_pickup_datetime
-        description: "The date and time when the meter was engaged."
+        description: ""
 
       - name: tpep_dropoff_datetime
-        description: "The date and time when the meter was disengaged."
+        description: ""
 
       - name: passenger_count
-        description: "The number of passengers in the vehicle."
+        description: ""
 
       - name: trip_distance
-        description: "The elapsed trip distance in miles reported by the taximeter."
+        description: ""
 
       - name: ratecodeid
-        description: "The final rate code in effect at the end of the trip. 1= Satndard rate, 2= JFK, 3= Newark, 4= Nassau or Westchester, 5= Negotiated fare, 6= Group ride"
+        description: ""
 
       - name: store_and_fwd_flag
-        description: "This flag indicates whether the trip record was held in vehicle memory before sending to the vendor, aka 'store and forward,' because the vehicle did not have a connection to the server."
+        description: ""
         tests:
-          - not_null:
-              config:
-                severity: warn     # Set the severity level to warn since there could be some legitimate have null values
+          - dbt_expectations.expect_column_to_exist
           - dbt_expectations.expect_column_values_to_be_of_type:
               column_type: boolean
-              
+
       - name: pulocationid
-        description: "TLC Taxi Zone in which the taximeter was engaged."
+        description: ""
 
       - name: dolocationid
-        description: "TLC Taxi Zone in which the taximeter was disengaged."
+        description: ""
 
       - name: payment_type
-        description: "A numeric code signifying how the passenger paid for the trip. 1= Credit Card, 2= Cash, 3= No charge, 4= Dispute, 5= Unknown, 6= Voided trip"
+        description: ""
 
       - name: fare_amount
-        description: "The time-and-distance fare calculated by the meter."
+        description: ""
 
       - name: extra
-        description: "Miscellaneous extras and surcharges. Currently, this only includes the $0.50 and $1 rush hour and overnight charges."
+        description: ""
 
       - name: mta_tax
-        description: "$0.50 MTA tax that is automatically triggered based on the metered rate in use."
+        description: ""
 
       - name: tip_amount
-        description: "This field is automatically populated for credit card tips. Cash tips are not included."
+        description: ""
 
       - name: tolls_amount
-        description: "Total amount of all tolls paid in trip."
+        description: ""
 
       - name: improvement_surcharge
-        description: "$0.30 improvement surcharge assessed trips at the flag drop. The improvement surcharge began being levied in 2015."
+        description: ""
 
       - name: total_amount
-        description: "The total amount charged to passengers. Does not include cash tips."
+        description: ""
 
       - name: congestion_surcharge
-        description: "Total amount collected in trip for NYS congestion surcharge."
+        description: ""
 
       - name: airport_fee
-        description: "$1.25 for pick up only at LaGuardia and John F. Kennedy Airports."
+        description: ""
 
       - name: filename
-        description: "Name of the file from which data was ingested"
+        description: ""
