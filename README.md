@@ -1,4 +1,4 @@
-##1. Data Loading and Processing
+1. Data Loading and Processing
 Load data into DuckDB. The dbt scripts ensure data accuracy by detecting and removing duplicates. This establishes a reliable data foundation.
 
 #2. Data Transformation with dbt
